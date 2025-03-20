@@ -1,0 +1,18 @@
+id,texto,correcta,pregunta_id
+1,app = Flask(__name__),0,1
+2,@app.route('/home'),0,1
+3,"def home(): return ""Hola",0,1
+4,"@app.route('/home')
+def home(): return ""Hola, Flask!""",1,1
+5,GET,1,2
+6,POST,1,2
+7,FETCH,0,2
+8,PUT,1,2
+9,flask.run(debug=True),0,3
+10,app.run(debug=True),1,3
+11,run flask --debug,0,3
+12,Flask.debug = True,0,3
+13,Para definir las rutas de la aplicación,0,4
+14,Para obtener datos enviados desde un formulario HTML,1,4
+15,Para establecer variables globales en la aplicación,0,4
+16,Para acceder a los datos enviados con el método POST,1,4

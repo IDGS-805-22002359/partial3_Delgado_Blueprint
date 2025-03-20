@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% block title %}Registro{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center p-4">
+  <div class="w-full max-w-md bg-white rounded-lg p-6">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Quiero registrarme</h2>
+    <form action="{{ url_for('registro') }}" method="post" class="space-y-5" novalidate>
+      {{ form.csrf_token() }}
+
+      <div>
+        {{ form.matricula.label(class="block text-sm font-medium text-gray-700") }}
+        {{ form.matricula(class="mt-1 block w-full border border-gray-300 rounded-full px-4 py-2 focus:ring-emerald-500 focus:border-emerald-500", placeholder="Tu matrícula") }}
+        {% if form.matricula.errors %}
+        <p class="mt-1 text-sm text-red-600">{{ form.matricula.errors[0] }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        {{ form.email.label(class="block text-sm font-medium text-gray-700") }}
+        {{ form.email(class="mt-1 block w-full border border-gray-300 rounded-full px-4 py-2 focus:ring-emerald-500 focus:border-emerald-500", placeholder="correo@alumnos.utleon.edu.mx") }}
+        {% if form.email.errors %}
+        <p class="mt-1 text-sm text-red-600">{{ form.email.errors[0] }}</p>
+        {% endif %}
+      </div>
+
+      <button type="submit"
+        class="w-full bg-emerald-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        Registrarme
+      </button>
+    </form>
+    <a href="{{ url_for('acceso') }}" class="block text-center text-sm text-gray-700 mt-4 hover:underline">
+      ¿Ya tienes cuenta? Ingresa con tu matrícula
+    </a>
+  </div>
+</div>
+{% endblock %}

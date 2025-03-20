@@ -1,0 +1,5 @@
+id,texto
+1,¿Cuál de las siguientes líneas de código define una ruta en Flask correctamente?
+2,¿Cuáles de los siguientes son tipos de peticiones HTTP que puede manejar Flask? (Selecciona todas las correctas)
+3,¿Cuál es la forma correcta de ejecutar una aplicación Flask en modo de depuración (debug mode)?
+4,¿Para qué sirve request.form en Flask?

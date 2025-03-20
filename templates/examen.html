@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+{% from '_macros.html' import input %}
+{% block title %}Examen{% endblock %}
+{% block content %}
+<form class="max-w-md mx-auto" action="{{url_for('alumno')}}" method="POST" novalidate>
+    <h1 class="text-2xl font-bold text-gray-900 text-center mb-5">Buscar Alumno</h1>
+    {{ alumno_form.csrf_token }}
+    <div class="grid grid-cols-3 gap-6">
+        {{ input(alumno_form.nombre) }}
+        {{ input(alumno_form.apellido_paterno) }}
+    </div>
+    <button type="submit"
+        class="text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center">
+        Buscar</button>
+</form>
+
+{% if examen_form and alumno %}
+<form class="max-w-md mx-auto mt-10 p-6" action="{{ url_for('examen') }}" method="POST" novalidate>
+    <h1 class="text-2xl font-bold text-gray-900 text-center mb-5">
+        {{ alumno.nombre }} {{ alumno.apellido_paterno }} {{ alumno.apellido_materno }} edad: {{ alumno.edad }} años
+        grupo: {{ alumno.grupo.nombre }}
+    </h1>
+    {{ examen_form.csrf_token }}
+    {{ examen_form.alumno_id() }}
+    {% for pregunta_form in examen_form.preguntas %}
+    <div class="mb-12">
+        {{ pregunta_form.pregunta_id() }}
+        <h2 class="text-lg font-semibold text-gray-900 mb-2">{{ pregunta_form.texto.data }}</h2>
+        <div class="grid grid-cols-2 gap-4">
+            {% for respuesta_form in pregunta_form.respuestas %}
+            <div class="form-check">
+                {{ respuesta_form(class="form-check-input") }}
+                {{ respuesta_form.label(class="form-check-label") }}
+            </div>
+            {% endfor %}
+        </div>
+        {% if pregunta_form.respuestas.errors %}
+        <div class="text-red-500 text-sm mt-1">
+            {% for error in pregunta_form.respuestas.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div class="text-center">
+        <button type="submit"
+            class="w-auto px-6 py-2 bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-md text-base text-white">
+            Enviar Examen
+        </button>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Distribución y empaquetado
+build/
+dist/
+*.egg-info/
+
+# Bases de datos temporales y archivos sqlite3
+*.db
+*.sqlite3
+
+# Archivos de configuración de entorno
+.env
+
+# Editor y IDE
+.vscode/
+.idea/
+
+# Node y tailwind
+node_modules/
+static/output.css
+
+# Archivos del sistema (macOS)
+.DS_Store
