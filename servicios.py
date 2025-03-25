@@ -1,5 +1,91 @@
-from modelos import Pregunta, Respuesta, Alumno, Grupo, Usuario
+from modelos import Pregunta, Respuesta, Alumno, Grupo, Usuario, Maestro
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+
+
+class MaestroServicio:
+    
+    def __init__(self, db):
+        self.db = db
+        
+    def obtener_maestros(self):
+        return self.db.session.query(Maestro).all()
+    
+    def obtener_maestro(self, id=None, matricula=None):
+        if id:
+            return self.db.session.query(Maestro).filter(Maestro.id == id).first()
+        if matricula:
+            return self.db.session.query(Maestro).filter(Maestro.matricula == matricula).first()
+        return None
+    
+    def crear_maestro(self, form):        
+        if self.db.session.query(Usuario).filter(Usuario.email == form.email.data).first():
+            raise ValueError("El correo ya se encuentra registrado.")
+        
+        maestro = Maestro()
+        maestro.nombre = form.nombre.data
+        maestro.apellido_paterno = form.apellido_paterno.data
+        maestro.apellido_materno = form.apellido_materno.data
+        maestro.fecha_nacimiento = form.fecha_nacimiento.data
+        maestro.matricula = self.generar_matricula()
+        
+        usuario = Usuario()
+        usuario.email = form.email.data
+        usuario.matricula = maestro.matricula
+        usuario.password = generate_password_hash(maestro.matricula)
+        usuario.rol = "MAESTRO"
+        
+        maestro.usuario = usuario
+        
+        self.db.session.add(usuario)
+        self.db.session.add(maestro)
+        self.db.session.commit()
+        
+        return maestro
+    
+    def editar_maestro(self, form):
+        maestro = self.obtener_maestro(id=form.id.data)
+        
+        if not maestro:
+            raise ValueError("El maestro no se encuentra registrado.")
+        
+        maestro.nombre = form.nombre.data
+        maestro.apellido_paterno = form.apellido_paterno.data
+        maestro.apellido_materno = form.apellido_materno.data
+        maestro.fecha_nacimiento = form.fecha_nacimiento.data
+        
+        if form.email.data != maestro.usuario.email:
+            if self.db.session.query(Usuario).filter(Usuario.email == form.email.data).first():
+                raise ValueError("El correo ya se encuentra registrado.")
+            maestro.usuario.email = form.email.data
+            
+        if form.password.data:
+            maestro.usuario.password = generate_password_hash(form.password.data)
+        
+        self.db.session.add(maestro)
+        self.db.session.commit()
+        
+        return maestro
+    
+    def eliminar_maestro(self, id):
+        maestro = self.obtener_maestro(id=id)
+        if not maestro:
+            raise ValueError("El maestro no se encuentra registrado.")
+        usuario = maestro.usuario
+        self.db.session.delete(maestro)
+        self.db.session.delete(usuario)
+        self.db.session.commit()
+    
+    
+    def generar_matricula(self):
+        # Se obtiene el último maestro ordenado por matrícula descendente
+        ultimo_maestro = self.db.session.query(Maestro).filter(Maestro.matricula != None).order_by(Maestro.matricula.desc()).first()
+        if ultimo_maestro and ultimo_maestro.matricula.isdigit():
+            siguiente_numero = int(ultimo_maestro.matricula) + 1
+        else:
+            siguiente_numero = 1
+        return f"{siguiente_numero:08d}"
+
 
 class AlumnoServicio:
     
@@ -12,14 +98,84 @@ class AlumnoServicio:
     def buscar_alumno_por_matricula(self, matricula):
         return self.db.session.query(Alumno).filter(Alumno.matricula == matricula).first()
     
+    def buscar_alumno_por_usuario(self, usuario_id):
+        return self.db.session.query(Alumno).filter(Alumno.usuario_id == usuario_id).first()
+    
     def obtener_alumno(self, id):
         return self.db.session.query(Alumno).get(id)
     
-    def obtener_alumnos(self, grupo_id):
+    def obtener_alumnos(self, grupo_id=None):
+        if not grupo_id:
+            return self.db.session.query(Alumno).all()
         return self.db.session.query(Alumno).filter(Alumno.grupo_id == grupo_id).all()
     
+    def crear_alumno(self, form):
+        if self.db.session.query(Usuario).filter(Usuario.email == form.email.data).first():
+            raise ValueError("El correo ya se encuentra registrado.")
+        
+        alumno = Alumno()
+        alumno.nombre = form.nombre.data
+        alumno.apellido_paterno = form.apellido_paterno.data
+        alumno.apellido_materno = form.apellido_materno.data
+        alumno.fecha_nacimiento = form.fecha_nacimiento.data
+        alumno.matricula = self.generar_matricula()
+        alumno.estatus = True
+        alumno.grupo_id = form.grupo.data
+        
+        usuario = Usuario()
+        usuario.email = form.email.data
+        usuario.matricula = alumno.matricula
+        usuario.password = generate_password_hash(alumno.matricula)  # contraseña inicial por defecto
+        usuario.rol = "ALUMNO"
+        
+        alumno.usuario = usuario
+        
+        self.db.session.add(usuario)
+        self.db.session.add(alumno)
+        self.db.session.commit()
+        
+        return alumno
+    
+    def editar_alumno(self, form):
+        alumno = self.obtener_alumno(id=form.id.data)
+        if not alumno:
+            raise ValueError("El alumno no se encuentra registrado.")
+        
+        alumno.nombre = form.nombre.data
+        alumno.apellido_paterno = form.apellido_paterno.data
+        alumno.apellido_materno = form.apellido_materno.data
+        alumno.fecha_nacimiento = form.fecha_nacimiento.data
+        
+        alumno.grupo_id = form.grupo.data
+        if alumno.grupo_id == 0:
+            alumno.grupo_id = None
+            alumno.estatus = False
+        else:
+            alumno.estatus = True
+        
+        if form.email.data != alumno.usuario.email:
+            usuario_existente = self.db.session.query(Usuario).filter(Usuario.email == form.email.data).first()
+            if usuario_existente:
+                raise ValueError("El correo ya se encuentra registrado.")
+            alumno.usuario.email = form.email.data
+        
+        if form.password.data:
+            alumno.usuario.password = generate_password_hash(form.password.data)
+            
+        
+        self.db.session.add(alumno)
+        self.db.session.commit()
+        
+        return alumno
+    
+    def eliminar_alumno(self, id):
+        alumno = self.obtener_alumno(id)
+        if not alumno:
+            raise ValueError("El alumno no se encuentra registrado.")
+        alumno.estatus = False
+        self.db.session.commit()
+            
     def evaluar_alumno(self, examen_form):
-
         alumno_id = examen_form.alumno_id.data
         alumno = self.db.session.query(Alumno).get(alumno_id)
 
@@ -59,6 +215,18 @@ class AlumnoServicio:
 
         alumno.calificacion = calificacion
         self.db.session.commit()
+        
+    def generar_matricula(self):
+        prefijo = str(datetime.now().year)[-2:]
+        # Ordenar descendiente solo los registros cuyo campo matricula inicie con el prefijo actual
+        ultimo_alumno = self.db.session.query(Alumno)\
+            .filter(Alumno.matricula.like(f"{prefijo}%"))\
+            .order_by(Alumno.matricula.desc()).first()
+        if ultimo_alumno and ultimo_alumno.matricula[2:].isdigit():
+            secuencia = int(ultimo_alumno.matricula[2:]) + 1
+        else:
+            secuencia = 1
+        return f"{prefijo}{secuencia:06d}"
     
 class GrupoServicio:
     
@@ -135,21 +303,28 @@ class UsuarioServicio():
         if self.obtener_usuario(email=email):
             raise ValueError("El correo ya se encuentra registrado.")
         
+        if self.obtener_usuario(matricula=matricula):
+            raise ValueError("La matrícula ya se encuentra registrada.")
+        
         hashed = generate_password_hash(alumno.matricula)
         usuario = Usuario(matricula=alumno.matricula, email=email, password=hashed, rol="ALUMNO")
         
         self.db.session.add(usuario)
+        
+        usuario = self.obtener_usuario(matricula=matricula)
+        alumno.usuario_id = usuario.id
+        
         self.db.session.commit()
         
         return usuario
 
     def validar_usuario(self, matricula, password):
         usuario = self.obtener_usuario(matricula=matricula)
-        print = ({
-            "matricula": usuario.matricula,
-            "email": usuario.email,
-            "rol": usuario.rol
-        })
-        if usuario and check_password_hash(usuario.password, password):
-            return usuario
-        raise ValueError("Credenciales inválidas.")
+        alumno = self.db.session.query(Alumno).filter(Alumno.matricula == matricula).first()
+        if not usuario:
+            raise ValueError("El usuario no se encuentra registrado.")
+        if alumno and not alumno.estatus:
+            raise ValueError("Tu cuenta está desactivada, por favor acude al área de servicios escolares.")
+        if not check_password_hash(usuario.password, password):
+            raise ValueError("Credenciales inválidas.")
+        return usuario

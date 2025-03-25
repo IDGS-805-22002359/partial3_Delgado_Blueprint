@@ -10,6 +10,19 @@ class Usuario(UserMixin, db.Model):
     email = db.Column(db.String(50))
     password = db.Column(db.String(512))
     rol = db.Column(db.String(50))
+
+class Maestro(db.Model):
+    __tablename__ = 'maestros'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(50))
+    apellido_paterno = db.Column(db.String(50))
+    apellido_materno = db.Column(db.String(50))
+    fecha_nacimiento = db.Column(db.Date)
+    matricula = db.Column(db.String(8))
+    
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+    usuario = db.relationship('Usuario', backref=db.backref('maestro', uselist=False, lazy=True))
     
 class Alumno(db.Model):
     __tablename__ = 'alumnos'
@@ -21,6 +34,7 @@ class Alumno(db.Model):
     fecha_nacimiento = db.Column(db.Date)
     calificacion = db.Column(db.Float)
     matricula = db.Column(db.String(8))
+    estatus = db.Column(db.Boolean)
     
     grupo_id = db.Column(db.Integer, db.ForeignKey('grupos.id'))
     grupo = db.relationship('Grupo', backref=db.backref('alumnos', lazy=True))

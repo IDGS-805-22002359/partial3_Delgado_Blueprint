@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FieldList, FormField, BooleanField, SelectMultipleField, HiddenField, EmailField, PasswordField
+from wtforms import StringField, FieldList, FormField, BooleanField, SelectMultipleField, HiddenField, EmailField, PasswordField, SelectField, DateField
 from wtforms import validators
 from wtforms.validators import InputRequired, Length, Email, EqualTo
 from wtforms.widgets import CheckboxInput, ListWidget
@@ -32,12 +32,29 @@ class IngresoForm(FlaskForm):
         message="La contraseña debe tener entre 4 y 50 caracteres."
     )])
     
-    recordarme = BooleanField('Recordarme')
-    
+    recordarme = BooleanField('Recordarme')  
 
 class AlumnoForm(FlaskForm):
+    id = HiddenField('ID')
     nombre = StringField('Nombre', [validators.Length(min=4, max=50, message="El nombre debe tener entre 4 y 50 caracteres"), validators.DataRequired(message='Este campo es requerido')])
     apellido_paterno = StringField('Apellido Paterno', [validators.Length(min=4, max=50, message="El apellido paterno debe tener entre 4 y 50 caracteres"), validators.DataRequired(message='Este campo es requerido')])
+    apellido_materno = StringField('Apellido Materno', [validators.Length(min=4, max=50, message="El apellido materno debe tener entre 4 y 50 caracteres"), validators.DataRequired(message='Este campo es requerido')])
+    fecha_nacimiento = DateField('Fecha de Nacimiento', [validators.DataRequired(message='Este campo es requerido')])
+    email = EmailField('Correo', [validators.Email(message="El correo no es válido"), validators.DataRequired(message='Este campo es requerido')])
+    password = PasswordField('Contraseña', [validators.Optional(), validators.Length(min=4, max=50, message="La contraseña debe tener entre 4 y 50 caracteres")])
+    confirmar_password = PasswordField('Confirmar Contraseña', [validators.Optional(), validators.EqualTo('password', message='Las contraseñas no coinciden')])
+    estatus = BooleanField('Activo')
+    grupo = SelectField('Grupo', [validators.Optional()], coerce=int, choices=[])
+    
+class MaestroForm(FlaskForm):
+    id = HiddenField('ID')
+    nombre = StringField('Nombre', [validators.Length(min=4, max=50, message="El nombre debe tener entre 4 y 50 caracteres"), validators.DataRequired(message='Este campo es requerido')])
+    apellido_paterno = StringField('Apellido Paterno', [validators.Length(min=4, max=50, message="El apellido paterno debe tener entre 4 y 50 caracteres"), validators.DataRequired(message='Este campo es requerido')])
+    apellido_materno = StringField('Apellido Materno', [validators.Length(min=4, max=50, message="El apellido materno debe tener entre 4 y 50 caracteres"), validators.DataRequired(message='Este campo es requerido')])
+    fecha_nacimiento = DateField('Fecha de Nacimiento', [validators.DataRequired(message='Este campo es requerido')])
+    email = EmailField('Correo', [validators.Email(message="El correo no es válido"), validators.DataRequired(message='Este campo es requerido')])
+    password = PasswordField('Contraseña', [validators.Optional(), validators.Length(min=4, max=50, message="La contraseña debe tener entre 4 y 50 caracteres")])
+    confirmar_password = PasswordField('Confirmar Contraseña', [validators.Optional(), validators.EqualTo('password', message='Las contraseñas no coinciden')])
 
 class PreguntaForm(FlaskForm):
     texto = StringField('Pregunta', [validators.Length(min=4, max=255, message="La pregunta debe tener entre 4 y 255 caracteres"), validators.DataRequired(message='Este campo es requerido')])

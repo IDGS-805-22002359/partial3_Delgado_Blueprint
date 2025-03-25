@@ -2,7 +2,7 @@
 {% from '_macros.html' import input, input_checkbox %}
 {% block title %}Preguntas{% endblock %}
 {% block content %}
-<form class="max-w-md mx-auto" action="{{url_for('preguntas')}}" method="POST" novalidate>
+<form class="max-w-md mx-auto" action="{{url_for('principal.maestro.preguntas')}}" method="POST" novalidate>
     <h1 class="text-2xl font-bold text-gray-900 text-center mb-5">Agregar Pregunta</h1>
     {{form.csrf_token}}
     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">

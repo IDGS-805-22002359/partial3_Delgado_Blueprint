@@ -4,7 +4,7 @@
 <div class="flex items-center justify-center p-4">
   <div class="w-full max-w-md bg-white rounded-lg p-6">
     <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Quiero registrarme</h2>
-    <form action="{{ url_for('registro') }}" method="post" class="space-y-5" novalidate>
+    <form action="{{ url_for('principal.registro') }}" method="post" class="space-y-5" novalidate>
       {{ form.csrf_token() }}
 
       <div>
@@ -28,7 +28,7 @@
         Registrarme
       </button>
     </form>
-    <a href="{{ url_for('acceso') }}" class="block text-center text-sm text-gray-700 mt-4 hover:underline">
+    <a href="{{ url_for('principal.acceso') }}" class="block text-center text-sm text-gray-700 mt-4 hover:underline">
       ¿Ya tienes cuenta? Ingresa con tu matrícula
     </a>
   </div>

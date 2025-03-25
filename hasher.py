@@ -1,3 +1,6 @@
+ 
 from werkzeug.security import generate_password_hash
-hashed = generate_password_hash('admin')
+
+input = "admin"
+hashed = generate_password_hash(input)
 print(hashed)

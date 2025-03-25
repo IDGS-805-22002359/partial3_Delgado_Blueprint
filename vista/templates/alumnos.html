@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+{% from '_macros.html' import input %}
+{% block title %}Alumnos{% endblock %}
+{% block content %}
+<form class="max-w-md mx-auto" action="{{url_for('principal.admin.alumnos')}}" method="POST" novalidate>
+    <h1 class="text-2xl font-bold text-gray-900 text-center mb-5">Agregar Alumno</h1>
+    {{form.csrf_token}}
+    {{ input(form.nombre) }}
+    {{ input(form.apellido_paterno) }}
+    {{ input(form.apellido_materno) }}
+    {{ input(form.fecha_nacimiento) }}
+    {{ input(form.email) }}
+    {{ input(form.grupo) }}
+    <button type="submit"
+        class="text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center">
+        Agregar</button>
+</form>
+<div class="max-w-4xl mx-auto mt-12 px-4">
+    <h1 class="text-2xl font-bold text-gray-900 text-center mb-6">Alumnos</h1>
+
+    {% if alumnos|length > 0 %}
+    <div class="bg-white rounded-lg border border-gray-200 shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-gray-900">
+                <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+                    <tr>
+                        <th scope="col" class="px-4 py-3"></th>
+                        <th scope="col" class="px-4 py-3">Matrícula</th>
+                        <th scope="col" class="px-4 py-3">Grupo</th>
+                        <th scope="col" class="px-4 py-3">Nombre</th>
+                        <th scope="col" class="px-4 py-3">Apellido Paterno</th>
+                        <th scope="col" class="px-4 py-3">Apellido Materno</th>
+                        <th scope="col" class="px-4 py-3">Fecha de Nacimiento</th>
+                        <th scope="col" class="px-4 py-3">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alumno in alumnos %}
+                    <tr onclick="window.location='{{ url_for('principal.admin.ver_alumno', id=alumno.id) }}'"
+                        class="hover:bg-gray-50 cursor-pointer">
+                        <td class="px-4 py-3 font-medium">
+                            {% if alumno.estatus %}
+                            <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm">
+                                Activo
+                            </span>
+                            {% else %}
+                            <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm">
+                                Inactivo
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ alumno.matricula }}
+                        </td>
+                        <td class="px-4 py-3 font-medium">
+                            {% if alumno.grupo %}
+                            {{ alumno.grupo.nombre }}
+                            {% else %}
+                            Sin grupo
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ alumno.nombre }}
+                        </td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ alumno.apellido_paterno }}
+                        </td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ alumno.apellido_materno }}
+                        </td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ alumno.fecha_nacimiento }}
+                        </td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ alumno.usuario.email }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-center text-gray-500 mt-6">No hay alumnos registrados</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -2,27 +2,41 @@
 {% block title %}Inicio{% endblock %}
 {% block content %}
 <div class="flex flex-col items-center gap-8">
+    <h1 class="text-4xl font-bold tracking-tight text-blue-500">¡Bienvenido(a) {{current_user.matricula}}!</h1>
+
     {% if current_user.rol == 'ADMIN' %}
-    <a href="{{url_for('preguntas')}}"
+    <a href="{{url_for('principal.admin.maestros')}}"
+        class="block w-full text-center max-w-sm p-6 bg-emerald-500 hover:bg-emerald-600 focus:ring-4 focus:outline-none focus:ring-emerald-300 rounded-lg shadow-sm">
+
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">Maestros</h5>
+    </a>
+    <a href="{{url_for('principal.admin.alumnos')}}"
+        class="block w-full text-center max-w-sm p-6 bg-emerald-500 hover:bg-emerald-600 focus:ring-4 focus:outline-none focus:ring-emerald-300 rounded-lg shadow-sm">
+
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">Alumnos</h5>
+    </a>
+    {% endif %}
+    {% if current_user.rol == 'MAESTRO' %}
+    <a href="{{url_for('principal.maestro.preguntas')}}"
         class="block w-full text-center max-w-sm p-6 bg-emerald-500 hover:bg-emerald-600 focus:ring-4 focus:outline-none focus:ring-emerald-300 rounded-lg shadow-sm">
 
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">Preguntas</h5>
     </a>
-    <a href="{{url_for('resultados')}}"
+    <a href="{{url_for('principal.maestro.resultados')}}"
         class="block w-full text-center max-w-sm p-6 bg-emerald-500 hover:bg-emerald-600 focus:ring-4 focus:outline-none focus:ring-emerald-300 rounded-lg shadow-sm">
 
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">Resultados</h5>
     </a>
     {% endif %}
     {% if current_user.rol == 'ALUMNO' %}
-    <a href="{{url_for('examen')}}"
+    <a href="{{url_for('principal.alumno.examen')}}"
         class="block w-full text-center max-w-sm p-6 bg-emerald-500 hover:bg-emerald-600 focus:ring-4 focus:outline-none focus:ring-emerald-300 rounded-lg shadow-sm">
 
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">Examen</h5>
     </a>
     {% endif %}
 
-    <a href="{{url_for('salir')}}"
+    <a href="{{url_for('principal.salir')}}"
         class="w-full text-center max-w-sm p-6 text-emerald-500 hover:text-white hover:bg-emerald-500 border border-emerald-500 focus:ring-4 focus:outline-none focus:ring-emerald-300 rounded-lg shadow-sm flex items-center justify-center gap-2">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg">

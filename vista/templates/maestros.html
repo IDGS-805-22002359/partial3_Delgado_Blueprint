@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+{% from '_macros.html' import input %}
+{% block title %}Maestros{% endblock %}
+{% block content %}
+<form class="max-w-md mx-auto" action="{{url_for('principal.admin.maestros')}}" method="POST" novalidate>
+    <h1 class="text-2xl font-bold text-gray-900 text-center mb-5">Agregar Maestro</h1>
+    {{form.csrf_token}}
+    {{ input(form.nombre) }}
+    {{ input(form.apellido_paterno) }}
+    {{ input(form.apellido_materno) }}
+    {{ input(form.fecha_nacimiento) }}
+    {{ input(form.email) }}
+    <button type="submit"
+        class="text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center">
+        Agregar</button>
+</form>
+<div class="max-w-4xl mx-auto mt-12 px-4">
+    <h1 class="text-2xl font-bold text-gray-900 text-center mb-6">Maestros</h1>
+
+    {% if maestros|length > 0 %}
+    <div class="bg-white rounded-lg border border-gray-200 shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-gray-900">
+                <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+                    <tr>
+                        <th scope="col" class="px-4 py-3">Matrícula</th>
+                        <th scope="col" class="px-4 py-3">Nombre</th>
+                        <th scope="col" class="px-4 py-3">Apellido Paterno</th>
+                        <th scope="col" class="px-4 py-3">Apellido Materno</th>
+                        <th scope="col" class="px-4 py-3">Fecha de Nacimiento</th>
+                        <th scope="col" class="px-4 py-3">Email</th>
+                    </tr>
+                </thead>
+<tbody>
+    {% for maestro in maestros %}
+    <tr onclick="window.location='{{ url_for('principal.admin.ver_maestro', id=maestro.id) }}'" class="hover:bg-gray-50 cursor-pointer">
+        <td class="px-4 py-3 font-medium">
+            {{ maestro.matricula }}
+        </td>
+        <td class="px-4 py-3 font-medium">
+            {{ maestro.nombre }}
+        </td>
+        <td class="px-4 py-3 font-medium">
+            {{ maestro.apellido_paterno }}
+        </td>
+        <td class="px-4 py-3 font-medium">
+            {{ maestro.apellido_materno }}
+        </td>
+        <td class="px-4 py-3 font-medium">
+            {{ maestro.fecha_nacimiento }}
+        </td>
+        <td class="px-4 py-3 font-medium">
+            {{ maestro.usuario.email }}
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-center text-gray-500 mt-6">No hay maestros registrados</p>
+    {% endif %}
+</div>
+{% endblock %}

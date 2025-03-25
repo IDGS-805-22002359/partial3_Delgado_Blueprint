@@ -14,7 +14,7 @@
                 <ul class="divide-y divide-gray-200">
                     {% for grupo in grupos %}
                     <li>
-                        <a href="{{ url_for('resultados', grupo_id=grupo.id) }}"
+                        <a href="{{ url_for('principal.maestro.resultados', grupo_id=grupo.id) }}"
                             class="block px-6 py-4 hover:bg-gray-50 {% if grupo_actual and grupo.id == grupo_actual.id %}bg-emerald-50 text-emerald-700 font-medium{% endif %}">
                             {{ grupo.nombre }}
                         </a>
